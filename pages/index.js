@@ -1,8 +1,20 @@
 import Head from 'next/head';
 import Layout, { siteTitle } from '../components/layout';
 import utilStyles from '../styles/utils.module.css';
+import { getSortedPostsData } from '../lib/posts';
+import Link from 'next/link';
+import Date from '../components/date';
 
-export default function Home() {
+export async function getStaticProps() {
+  const allPostsData = getSortedPostsData();
+  return {
+    props: {
+      allPostsData,
+    },
+  };
+}
+
+export default function Home({ allPostsData }) {
   return (
     <Layout home>
       <Head>
@@ -10,11 +22,25 @@ export default function Home() {
       </Head>
       <section className={utilStyles.headingMd}>
         <p>Hello, I'm Alexander. I'm a third-year university student of BSTU "VOENMEH". 
-          I'm currently learning internet technologies, my projects can be viewed <a href="https://github.com/goshakat" target="_ blank">here</a>.
+          I'm currently learning internet technologies, my projects can be viewed <a href="https://github.com/goshakat" target="_blank">here</a>.
         </p>
         <p>
-          You can contact me on <a href="https://t.me/hramovsasha" target="_ blank">Telegram</a>.
+          You can contact me on <a href="https://t.me/hramovsasha" target="_blank">Telegram</a>.
         </p>
+      </section>
+      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+        <h2 className={utilStyles.headingLg}>Blog</h2>
+        <ul className={utilStyles.list}>
+          {allPostsData.map(({ id, date, title }) => (
+            <li className={utilStyles.listItem} key={id}>
+            <Link href={`/posts/${id}`}>{title}</Link>
+            <br />
+            <small className={utilStyles.lightText}>
+              <Date dateString={date} />
+            </small>
+          </li>
+          ))}
+        </ul>
       </section>
     </Layout>
   );
